@@ -8,13 +8,14 @@ import ErrorButton from "../error-button";
 import ErrorIndicator from "../error-indicator";
 import PeoplePage from "../people-page";
 
-import PersonDetails from "../person-details";
+import ItemDetails from "../item-details";
 import ItemList from "../item-list";
 import SwapiService from "../../services/swapi-service";
+import Row from "../row";
 
 export default class App extends Component {
 
-	swapiService = new SwapiService();
+    swapiService = new SwapiService();
 
     state = {
         showRandomPlanet: true,
@@ -34,10 +35,10 @@ export default class App extends Component {
     }
 
     onPersonSelected = (id) => {
-      this.setState({
-		selectedPlanet: id,
-      });
-  };
+        this.setState({
+            selectedPlanet: id,
+        });
+    };
 
     render() {
         if (this.state.hasError) {
@@ -46,10 +47,15 @@ export default class App extends Component {
 
         const planet = this.state.showRandomPlanet ? <RandomPlanet /> : null;
 
+        const { getPerson, getPlanet, getPersonImage, getPlanetImage } = this.swapiService;
+        const personDetails = <ItemDetails getData={getPerson} itemId={10} getImageUrl={getPersonImage}/>;
+
+        const planetDetails = <ItemDetails getData={getPlanet} itemId={6} getImageUrl={getPlanetImage}/>;
+
         return (
             <div className="stardb-app">
                 <Header />
-                {planet}
+                {/* {planet}
 
                 <button
                     className="toggle-planet btn btn-warning btn-lg"
@@ -58,9 +64,11 @@ export default class App extends Component {
                     Toggle Random Planet
                 </button>
 
-                <ErrorButton />
+                <ErrorButton /> */}
 
-                <PeoplePage />
+                <Row left={personDetails} right={planetDetails} />
+
+                {/* <PeoplePage /> */}
 
                 {/* <div className="row mb2">
                     <div className="col-md-6">

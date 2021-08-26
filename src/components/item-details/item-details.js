@@ -1,62 +1,65 @@
 import React, { Component } from "react";
 
-import "./person-details.css";
+import "./item-details.css";
 import SwapiService from "../../services/swapi-service";
 import Spinner from "../spinner/spinner";
 import ErrorButton from "../error-button";
 
-export default class PersonDetails extends Component {
+export default class ItemDetails extends Component {
     swapiService = new SwapiService();
 
     state = {
-        person: null,
+        item: null,
+        image: null,
         loaded: false,
     };
 
     componentDidMount() {
-        this.updatePerson();
+        this.updateItem();
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.personId !== prevProps.personId) {
+        if (this.props.itemId !== prevProps.itemId) {
             this.setState({ loaded: false });
-            this.updatePerson();
+            this.updateItem();
         }
     }
 
-    updatePerson() {
-        const { personId } = this.props;
-        if (!personId) {
+    updateItem() {
+        const { itemId, getData, getImageUrl } = this.props;
+        if (!itemId) {
             return;
         }
 
-        this.swapiService.getPerson(personId).then((person) => {
-            this.setState({ person, loaded: true });
+        getData(itemId).then((item) => {
+            this.setState({ item, image: getImageUrl(item),loaded: true });
         });
     }
 
     render() {
-        if (!this.state.person) {
+        const {item, image, loaded} = this.state;
+
+        if (!item) {
             return <span>Select a person from a list</span>;
         }
 
-        if (!this.state.loaded) {
+        if (!loaded) {
             return <Spinner />;
         }
 
-        const { id, name, gender, birthYear, eyeColor } = this.state.person;
+        const { id, name, gender, birthYear, eyeColor } = item;
 
         return (
             <div className="person-details card">
                 <img
                     className="person-image"
-                    src={`https://starwars-visualguide.com/assets/img/characters/${id}.jpg`}
+                    src={image}
                     alt="character"
                 />
 
                 <div className="card-body">
                     <h4>
-                        {name} ({this.props.personId})
+                        {name} ({this.props.itemId})
                     </h4>
                     <ul className="list-group list-group-flush">
                         <li className="list-group-item">
